@@ -4,8 +4,17 @@ import numpy as np
 
 os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 
-import tensorflow as tf
-import tensorflow_model_optimization as tfmot
+# Make TensorFlow and TFMOT optional so the app can deploy where TF wheels
+# are unavailable. Import errors will be caught and functions will raise
+# informative errors at call time.
+TF_AVAILABLE = True
+try:
+    import tensorflow as tf
+    import tensorflow_model_optimization as tfmot
+except Exception:
+    tf = None
+    tfmot = None
+    TF_AVAILABLE = False
 
 
 def apply_equalized_odds(probabilities, sensitive_column):
@@ -85,6 +94,12 @@ def apply_equalized_odds_multiclass(probabilities, y_true, sensitive_column, cla
 
 
 def optimize_model(keras_model):
+    if not TF_AVAILABLE:
+        raise RuntimeError(
+            "TensorFlow (and/or tensorflow_model_optimization) is not available in this environment.\n"
+            "To use `optimize_model`, install TensorFlow and tensorflow-model-optimization or run locally."
+        )
+
     output_units = keras_model.output_shape[-1] if keras_model.output_shape else 1
     use_multiclass = output_units is not None and output_units > 1
 
