@@ -6,7 +6,6 @@ os.environ.setdefault("TF_USE_LEGACY_KERAS", "1")
 import numpy as np
 import pandas as pd
 import streamlit as st
-import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
 from backend_engines.data_engine import process_upload, read_dataset
@@ -16,6 +15,15 @@ from backend_engines.refine_engine import (
     apply_equalized_odds_multiclass,
     optimize_model,
 )
+
+# Make TensorFlow optional so the app can run in environments where TF
+# wheels are unavailable (e.g., Streamlit Cloud Python versions).
+TF_AVAILABLE = True
+try:
+    import tensorflow as tf
+except Exception:
+    tf = None
+    TF_AVAILABLE = False
 
 # Premium CSS for better aesthetics
 CUSTOM_CSS = """
@@ -202,6 +210,10 @@ def split_data(processed):
 
 
 def train_baseline(processed):
+    if not TF_AVAILABLE:
+        raise RuntimeError(
+            "TensorFlow is not available in this environment. Install TensorFlow to train Keras models, or run the app locally where TensorFlow is installed."
+        )
     X = processed["features"]
     model_data = split_data(processed)
     X_train = model_data["X_train"]
@@ -246,6 +258,10 @@ def train_baseline(processed):
 
 
 def load_uploaded_model(uploaded_model, processed):
+    if not TF_AVAILABLE:
+        raise RuntimeError(
+            "TensorFlow is not available in this environment. Uploaded Keras models cannot be loaded without TensorFlow."
+        )
     model_data = split_data(processed)
     suffix = os.path.splitext(uploaded_model.name)[-1]
 
