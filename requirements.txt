@@ -1,0 +1,9 @@
+streamlit
+tensorflow
+tf-keras
+tensorflow-model-optimization
+shap
+pandas
+numpy
+scikit-learn
+matplotlib

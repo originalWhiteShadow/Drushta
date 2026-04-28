@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Local app state
+.streamlit/
+
+# Data files (generated or uploaded)
+data/*.csv
+data/*.tsv
+data/*.parquet
+data/*.xlsx
