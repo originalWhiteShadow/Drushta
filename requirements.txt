@@ -1,7 +1,6 @@
 streamlit
-tensorflow
-tf-keras
-tensorflow-model-optimization
+tensorflow==2.15.1
+tensorflow-model-optimization==0.8.0
 shap
 pandas
 numpy
